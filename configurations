@@ -1,0 +1,11 @@
+$ mysql -h localhost -u root -p mysql
+
+mysql> CREATE DATABASE bootapp;
+
+mysql> CREATE USER procesosagiles@localhost IDENTIFIED BY password123’;
+
+mysql> GRANT ALL PRIVILEGES ON bootapp.* TO procesosagiles@localhost;
+
+mysql> FLUSH PRIVILEGES;
+
+mysql> EXIT;
