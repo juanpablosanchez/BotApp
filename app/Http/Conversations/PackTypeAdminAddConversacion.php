@@ -39,25 +39,30 @@ class PackTypeAdminAddConversacion extends Conversation
             $packType = $answer->getText();
 
             if ($this->existPackType($packType)) {
-                $message = Question::create('El tipo de paquete ingresado ya existe. ¿Desea ingresar uno nuevo?')
-                    ->addButtons([
-                        Button::create('Si')->value(Constant::OK),
-                        Button::create('No')->value(Constant::KO),
-                    ]);
-
-                $this->ask($message, function (Answer $answer) {
-                    if ($answer->isInteractiveMessageReply()) {
-                        if ($answer->getValue() == Constant::OK) {
-                            $this->showCurrentPacksType();
-                        }
-                    } else {
-                        $this->say('Por favor elige una opción de la lista.');
-                        $this->repeat();
-                    }
-                });
+                $this->errorRequestNewPackType();
             } else {
                 $this->registerNewPackType($packType);
                 $this->say('El nuevo paquete ha sido registrado correctamente');
+            }
+        });
+    }
+
+    public function errorRequestNewPackType()
+    {
+        $message = Question::create('El tipo de paquete ingresado ya existe. ¿Desea ingresar uno nuevo?')
+            ->addButtons([
+                Button::create('Si')->value(Constant::OK),
+                Button::create('No')->value(Constant::KO),
+            ]);
+
+        $this->ask($message, function (Answer $answer) {
+            if ($answer->isInteractiveMessageReply()) {
+                if ($answer->getValue() == Constant::OK) {
+                    $this->showCurrentPacksType();
+                }
+            } else {
+                $this->say('Por favor elige una opción de la lista.');
+                $this->requestNewPackType();
             }
         });
     }
