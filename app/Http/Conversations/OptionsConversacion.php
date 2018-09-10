@@ -6,6 +6,7 @@ use BotMan\BotMan\Messages\Conversations\Conversation;
 use BotMan\BotMan\Messages\Incoming\Answer;
 use BotMan\BotMan\Messages\Outgoing\Actions\Button;
 use BotMan\BotMan\Messages\Outgoing\Question;
+use App\Http\Helper\Constant;
 
 class OptionsConversacion extends Conversation
 {
@@ -16,12 +17,6 @@ class OptionsConversacion extends Conversation
      */
     public function run()
     {
-        $this->SENDINGS_CONSULT = 'consult';
-        $this->PACK_TYPE_ADMIN = 'tipopaquete';
-        $this->CHANGE_STATES = 'estados';
-        $this->LOGIN = 'login';
-        $this->SENDINGS_REGISTER = 'sender';
-
         $this->showOptions();
     }
 
@@ -29,15 +24,15 @@ class OptionsConversacion extends Conversation
     {
         if ($this->isAdmin()) {
             $options = [
-                Button::create('Consultar')->value($this->SENDINGS_CONSULT),
-                Button::create('Administrar tipo de paquete')->value($this->PACK_TYPE_ADMIN),
-                Button::create('Modificar estado de envío')->value($this->CHANGE_STATES),
+                Button::create('Consultar')->value(Constant::SENDINGS_CONSULT),
+                Button::create('Administrar tipo de paquete')->value(Constant::PACK_TYPE_ADMIN),
+                Button::create('Modificar estado de envío')->value(Constant::CHANGE_STATES),
             ];
         } else {
             $options = [
-                Button::create('Iniciar sesión')->value($this->LOGIN),
-                Button::create('Realizar envío')->value($this->SENDINGS_REGISTER),
-                Button::create('Consultar')->value($this->SENDINGS_CONSULT),
+                Button::create('Iniciar sesión')->value(Constant::LOGIN),
+                Button::create('Realizar envío')->value(Constant::SENDINGS_REGISTER),
+                Button::create('Consultar')->value(Constant::SENDINGS_CONSULT),
             ];
         }
 
@@ -58,19 +53,19 @@ class OptionsConversacion extends Conversation
     public function choosedOption($option)
     {
         switch ($option) {
-            case $this->SENDINGS_CONSULT:
+            case Constant::SENDINGS_CONSULT:
                 $this->sendingsConsult();
                 break;
-            case $this->PACK_TYPE_ADMIN:
+            case Constant::PACK_TYPE_ADMIN:
                 $this->packTypeAdmin();
                 break;
-            case $this->CHANGE_STATES:
+            case Constant::CHANGE_STATES:
                 $this->changeState();
                 break;
-            case $this->LOGIN:
+            case Constant::LOGIN:
                 $this->login();
                 break;
-            case $this->SENDINGS_REGISTER:
+            case Constant::SENDINGS_REGISTER:
                 $this->sendingsRegister();
                 break;
         }
@@ -78,31 +73,42 @@ class OptionsConversacion extends Conversation
 
     public function sendingsConsult()
     {
-         $this->bot->startConversation(new \App\Http\Conversations\SendingsConsultConversacion);
+        $this->bot->startConversation(new \App\Http\Conversations\SendingsConsultConversacion);
     }
 
     public function packTypeAdmin()
     {
-         $this->bot->startConversation(new \App\Http\Conversations\PackTypeAdminConversacion);
+        $this->bot->startConversation(new \App\Http\Conversations\PackTypeAdminConversacion);
     }
 
     public function changeState()
     {
-         $this->bot->startConversation(new \App\Http\Conversations\ChangeStateConversacion);
+        $this->bot->startConversation(new \App\Http\Conversations\ChangeStateConversacion);
     }
 
     public function login()
     {
-         $this->bot->startConversation(new \App\Http\Conversations\LoginConversacion);
+        $this->bot->startConversation(new \App\Http\Conversations\LoginConversacion);
     }
 
     public function sendingsRegister()
     {
-         $this->bot->startConversation(new \App\Http\Conversations\SendingsRegisterConversacion);
+        $this->bot->startConversation(new \App\Http\Conversations\SendingsRegisterConversacion);
     }
 
     public function isAdmin()
     {
+        $channel = $this->bot->getUser();
+        $id = $channel->getId();
 
+        $userSaved = \App\Cliente::where('codigo', $id)->get();
+
+        if ($userSaved->isEmpty()) {
+            return false;
+        }
+
+        $userAdmin = \App\Administrador::where('cliente_id', $userSaved->first()->id)->count();
+
+        return $userAdmin > 0;
     }
 }

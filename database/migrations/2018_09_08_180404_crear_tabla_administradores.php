@@ -13,10 +13,9 @@ class CrearTablaAdministradores extends Migration
      */
     public function up()
     {
-        Schema::create('administradores', function (Blueprint $table) {
+        Schema::create('administradors', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('cliente_id');
-            $table->string('chatid');
             $table->timestamps();
 
             $table->foreign('cliente_id')
