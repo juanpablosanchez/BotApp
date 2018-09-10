@@ -21,7 +21,7 @@ class CrearTablaPaquetes extends Migration
             $table->timestamps();
 
             $table->foreign('tipopaquete_id')
-                ->references('id')->on('tipopaquetes')
+                ->references('id')->on('tipo_paquetes')
                 ->onUpdate('cascade');
             $table->foreign('envio_id')
                 ->references('id')->on('envios')

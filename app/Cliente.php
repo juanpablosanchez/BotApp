@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Cliente extends Model
 {
     protected $fillable = [
-        'cedula', 'nombre', 'apellido', 'telefono',
+        'codigo', 'cedula', 'nombre', 'apellido', 'telefono',
     ];
 
     /**

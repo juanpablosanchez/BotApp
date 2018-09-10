@@ -15,10 +15,11 @@ class CrearTablaClientes extends Migration
     {
         Schema::create('clientes', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('cedula', 15)->nullable();
+            $table->string('codigo', 30)->nullable();
+            $table->string('cedula', 15)->default('');
             $table->string('nombre', 30)->nullable();
-            $table->string('apellido', 30);
-            $table->string('telefono', 15)->nullable();
+            $table->string('apellido', 30)->default('');
+            $table->string('telefono', 15)->default('');
             $table->timestamps();
         });
     }
