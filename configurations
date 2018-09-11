@@ -10,4 +10,5 @@ mysql> FLUSH PRIVILEGES;
 
 mysql> EXIT;
 
-hola 
+
+php artisan migrate:refresh --seed

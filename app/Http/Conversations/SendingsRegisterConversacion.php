@@ -18,6 +18,7 @@ class SendingsRegisterConversacion extends Conversation
     public function run()
     {
         $this->packages = array();
+        $this->packsTypeList = \App\TipoPaquete::orderBy('nombre', 'asc')->get();
 
         $this->getUserInfo();
     }
@@ -30,7 +31,7 @@ class SendingsRegisterConversacion extends Conversation
             $this->say('No estas registrado, para registrarse use el siguiente comando "/start"');
         } else {
             if (empty($this->cedula) || empty($this->nombre) || empty($this->apellido) || empty($this->telefono)) {
-                $this->requestUserInfo();
+                $this->askDocument();
             } else {
                 $message = Question::create('¿Desea modificar esta información?')
                     ->addButtons([
@@ -54,10 +55,11 @@ class SendingsRegisterConversacion extends Conversation
         }
     }
 
-    public function askDocument(){
+    public function askDocument()
+    {
         $this->ask("Ingrese su documento de identidad", function (Answer $answer) {
             $this->user->cedula = trim($answer->getText());
-            if(empty($this->user->cedula)){
+            if (empty($this->user->cedula)) {
                 $this->say('Documento no válido');
                 $this->repeat();
             } else {
@@ -66,10 +68,11 @@ class SendingsRegisterConversacion extends Conversation
         });
     }
 
-    public function askFirstname(){
+    public function askFirstname()
+    {
         $this->ask("Ingrese su nombre", function (Answer $answer) {
             $this->user->nombre = trim($answer->getText());
-            if(empty($this->user->nombre)){
+            if (empty($this->user->nombre)) {
                 $this->say('Nombre no válido');
                 $this->repeat();
             } else {
@@ -78,10 +81,11 @@ class SendingsRegisterConversacion extends Conversation
         });
     }
 
-    public function askLastname(){
+    public function askLastname()
+    {
         $this->ask("Ingrese su apellido", function (Answer $answer) {
             $this->user->apellido = trim($answer->getText());
-            if(empty($this->user->apellido)){
+            if (empty($this->user->apellido)) {
                 $this->say('Apellido no válido');
                 $this->repeat();
             } else {
@@ -90,10 +94,11 @@ class SendingsRegisterConversacion extends Conversation
         });
     }
 
-    public function askPhone(){
+    public function askPhone()
+    {
         $this->ask("Ingrese su teléfono", function (Answer $answer) {
             $this->user->telefono = trim($answer->getText());
-            if(empty($this->user->telefono)){
+            if (empty($this->user->telefono)) {
                 $this->say('Teléfono no válido');
                 $this->repeat();
             } else {
@@ -104,7 +109,66 @@ class SendingsRegisterConversacion extends Conversation
 
     public function requestPackageInfo()
     {
-        // TODO
+        $messageButton = array();
+        foreach ($this->packsTypeList as $packType) {
+            array_push($messageButton, Button::create($packType->nombre)->value($packType->id));
+        }
+        $message = Question::create('Selecciona un tipo de paquete')->addButtons($messageButton);
+
+        $this->ask($message, function (Answer $answer) {
+            if ($answer->isInteractiveMessageReply()) {
+                $this->newPackType = $answer->getValue();
+                $this->askWeight();
+            } else {
+                $this->say('Por favor elige una opción de la lista.');
+                $this->repeat();
+            }
+        });
+    }
+
+    public function askWeight()
+    {
+        $this->ask("Ingrese el peso del paquete", function (Answer $answer) {
+            $this->newWeight = intval(trim($answer->getText()));
+            if ($this->newWeight > 0) {
+                $this->questionForAddNewPackage();
+            } else {
+                $this->say('Peso no válido');
+                $this->repeat();
+            }
+        });
+    }
+
+    public function questionForAddNewPackage()
+    {
+        array_push($this->packages, [
+            'tipopaquete_id' => $this->newPackType,
+            'peso' => $this->newWeight,
+        ]);
+
+        $message = Question::create('¿Desea registrar otro paquete?')
+            ->addButtons([
+                Button::create('Si')->value(Constant::OK),
+                Button::create('No')->value(Constant::KO),
+            ]);
+
+        $this->ask($message, function (Answer $answer) {
+            if ($answer->isInteractiveMessageReply()) {
+                if ($answer->getValue() == Constant::OK) {
+                    $this->requestPackageInfo();
+                } else {
+                    $this->requestSendingInfo();
+                }
+            } else {
+                $this->say('Por favor elige una opción de la lista.');
+                $this->requestPackTypeToDelete();
+            }
+        });
+    }
+
+    public function requestSendingInfo()
+    {
+        $this->say('OKOK');
     }
 
     public function getUser()
