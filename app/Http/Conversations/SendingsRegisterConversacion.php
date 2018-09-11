@@ -380,8 +380,11 @@ class SendingsRegisterConversacion extends Conversation
 
     public function registerSending()
     {
+        $sendingState = \App\Estado::where('nombre', Constant::DEFAULT_SENDING_STATE)->get()->first();
+
         $sending = \App\Envio::create([
             'cliente_id' => $this->user->id,
+            'estado_id' => $sendingState->id,
             'codigo' => '',
             'fecharecogida' => $this->sendingInfo->fecharecogida,
             'paisrecogida' => $this->sendingInfo->paisrecogida,

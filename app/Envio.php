@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Envio extends Model
 {
     protected $fillable = [
-        'codigo', 'cliente_id', 'fecharecogida', 'paisrecogida', 'estadorecogida', 'direccionrecogida', 'paisllegada', 'estadollegada', 'direccionllegada'
+        'codigo', 'cliente_id', 'estado_id', 'fecharecogida', 'paisrecogida', 'estadorecogida', 'direccionrecogida', 'paisllegada', 'estadollegada', 'direccionllegada'
     ];
 
     /**

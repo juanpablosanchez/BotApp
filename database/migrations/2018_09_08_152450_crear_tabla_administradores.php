@@ -20,8 +20,7 @@ class CrearTablaAdministradores extends Migration
 
             $table->foreign('cliente_id')
                 ->references('id')->on('clientes')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+                ->onUpdate('cascade');
         });
     }
 
@@ -32,6 +31,6 @@ class CrearTablaAdministradores extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('administradores');
+        Schema::dropIfExists('administradors');
     }
 }

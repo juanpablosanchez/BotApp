@@ -10,8 +10,13 @@ class Constant
     const LOGIN = 'login_key';
     const SENDINGS_REGISTER = 'sendingsRegister_key';
     const OK = 'ok_key';
-    const KO = 'No_key';
-    const EDIT = 'Edit_key';
-    const ADD = 'Add_key';
-    const DELETE = 'Delete_key';
+    const KO = 'no_key';
+    const EDIT = 'edit_key';
+    const ADD = 'add_key';
+    const DELETE = 'delete_key';
+    const LIST = 'list_key';
+    const CANCEL = 'cancel_key';
+    
+    const DEFAULT_SENDING_STATE = 'Pendiente';
+    const DELIVERED_SENDING_STATE = 'Entregado';
 }
