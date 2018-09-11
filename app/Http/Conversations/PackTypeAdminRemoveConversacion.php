@@ -3,8 +3,10 @@
 namespace App\Http\Conversations;
 
 use App\Http\Helper\Constant;
+use App\Http\Helper\Helper;
 use BotMan\BotMan\Messages\Conversations\Conversation;
 use BotMan\BotMan\Messages\Incoming\Answer;
+use BotMan\BotMan\Messages\Incoming\IncomingMessage;
 use BotMan\BotMan\Messages\Outgoing\Actions\Button;
 use BotMan\BotMan\Messages\Outgoing\Question;
 use Exception;
@@ -19,6 +21,11 @@ class PackTypeAdminRemoveConversacion extends Conversation
     public function run()
     {
         $this->showCurrentPacksType();
+    }
+
+    public function stopsConversation(IncomingMessage $message)
+    {
+        return Helper::stopConversation($message->getText());
     }
 
     public function showCurrentPacksType()
@@ -37,8 +44,10 @@ class PackTypeAdminRemoveConversacion extends Conversation
 
                 if ($deleted) {
                     $this->showPacksTypeList();
+                    $this->bot->startConversation(new \App\Http\Conversations\OptionsConversacion);
                 } else {
                     $this->say('El número de tipo de paquete ingresado  se encuentra asociado a un paquete registrado');
+                    $this->bot->startConversation(new \App\Http\Conversations\OptionsConversacion);
                 }
             } else {
                 $this->ErrorRequestPackTypeToDelete();
@@ -58,6 +67,8 @@ class PackTypeAdminRemoveConversacion extends Conversation
             if ($answer->isInteractiveMessageReply()) {
                 if ($answer->getValue() == Constant::OK) {
                     $this->showCurrentPacksType();
+                } else {
+                    $this->bot->startConversation(new \App\Http\Conversations\OptionsConversacion);
                 }
             } else {
                 $this->say('Por favor elige una opción de la lista.');

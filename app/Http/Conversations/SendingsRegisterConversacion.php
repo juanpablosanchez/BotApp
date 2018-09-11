@@ -279,6 +279,8 @@ class SendingsRegisterConversacion extends Conversation
             if ($answer->isInteractiveMessageReply()) {
                 if ($answer->getValue() == Constant::KO) {
                     $this->askDepartureDate();
+                } else {
+                    $this->bot->startConversation(new \App\Http\Conversations\OptionsConversacion);
                 }
             } else {
                 $this->say('Por favor elige una opción de la lista.');
@@ -408,6 +410,7 @@ class SendingsRegisterConversacion extends Conversation
         $this->sendMessageToAdmin();
 
         $this->say('El envío ha sido registrado');
+        $this->bot->startConversation(new \App\Http\Conversations\OptionsConversacion);
     }
 
     public function sendMessageToAdmin()
@@ -416,21 +419,21 @@ class SendingsRegisterConversacion extends Conversation
 
         foreach ($admins as $admin) {
             $this->bot->say(
-                'Se ha registrado un envío desde su empresa de mensajería. Código de envío: ' . $this->sendingInfo->codigo, 
-                $admin, 
+                'Se ha registrado un envío desde su empresa de mensajería. Código de envío: ' . $this->sendingInfo->codigo,
+                $admin,
                 TelegramDriver::class
             );
             foreach ($this->packages as $package) {
                 $packType = $this->packsTypeList->where('id', $package['tipopaquete_id'])->first();
                 $this->bot->say(
-                    'Paquete: Tipo de paquete ' . $packType->nombre . ', peso: ' . $package['peso'], 
-                    $admin, 
+                    'Paquete: Tipo de paquete ' . $packType->nombre . ', peso: ' . $package['peso'],
+                    $admin,
                     TelegramDriver::class
                 );
             }
             $this->bot->say(
-                'Información del cliente: Nombre: ' . $this->user->nombre . ', apellido: ' . $this->user->apellido . ', teléfono; ' . $this->user->telefono, 
-                $admin, 
+                'Información del cliente: Nombre: ' . $this->user->nombre . ', apellido: ' . $this->user->apellido . ', teléfono; ' . $this->user->telefono,
+                $admin,
                 TelegramDriver::class
             );
         }

@@ -3,8 +3,10 @@
 namespace App\Http\Conversations;
 
 use App\Http\Helper\Constant;
+use App\Http\Helper\Helper;
 use BotMan\BotMan\Messages\Conversations\Conversation;
 use BotMan\BotMan\Messages\Incoming\Answer;
+use BotMan\BotMan\Messages\Incoming\IncomingMessage;
 use BotMan\BotMan\Messages\Outgoing\Actions\Button;
 use BotMan\BotMan\Messages\Outgoing\Question;
 
@@ -18,6 +20,11 @@ class PackTypeAdminEditConversacion extends Conversation
     public function run()
     {
         $this->showCurrentPacksType();
+    }
+
+    public function stopsConversation(IncomingMessage $message)
+    {
+        return Helper::stopConversation($message->getText());
     }
 
     public function showCurrentPacksType()
@@ -48,8 +55,10 @@ class PackTypeAdminEditConversacion extends Conversation
 
             if ($updated) {
                 $this->showPacksTypeList();
+                $this->bot->startConversation(new \App\Http\Conversations\OptionsConversacion);
             } else {
                 $this->say('El tipo de paquete "' . $newPackType . '" existe');
+                $this->bot->startConversation(new \App\Http\Conversations\OptionsConversacion);
             }
         });
     }
@@ -66,6 +75,8 @@ class PackTypeAdminEditConversacion extends Conversation
             if ($answer->isInteractiveMessageReply()) {
                 if ($answer->getValue() == Constant::OK) {
                     $this->showCurrentPacksType();
+                } else {
+                    $this->bot->startConversation(new \App\Http\Conversations\OptionsConversacion);
                 }
             } else {
                 $this->say('Por favor elige una opción de la lista.');
@@ -78,7 +89,7 @@ class PackTypeAdminEditConversacion extends Conversation
     {
         $packsTypeByName = \App\TipoPaquete::where('nombre', $newPackType)->get();
 
-        if($packsTypeByName->isEmpty()) {
+        if ($packsTypeByName->isEmpty()) {
             \App\TipoPaquete::where('id', $this->packTypeToUpdate->id)->update([
                 'nombre' => trim($newPackType),
             ]);

@@ -71,6 +71,7 @@ class SendingsConsultConversacion extends Conversation
                     ', Dirección llegada: ' . $this->sending->direccionllegada
                 );
             }
+            $this->bot->startConversation(new \App\Http\Conversations\OptionsConversacion);
         });
     }
 

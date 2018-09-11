@@ -48,6 +48,7 @@ class ChangeStateConversacion extends Conversation
             $sendingsFiltered = $this->sendings->where('codigo', $sendingCode);
             if ($sendingsFiltered->isEmpty()) {
                 $this->say('Código inválido');
+                $this->bot->startConversation(new \App\Http\Conversations\OptionsConversacion);
             } else {
                 $this->sending = $sendingsFiltered->first();
                 $user = \App\Cliente::where('id', $this->sending->cliente_id)->get()->first();
@@ -88,6 +89,9 @@ class ChangeStateConversacion extends Conversation
                         break;
                     case Constant::list:
                         $this->showAllSendings();
+                        break;
+                    default:
+                        $this->bot->startConversation(new \App\Http\Conversations\OptionsConversacion);
                         break;
                 }
             } else {
@@ -138,6 +142,8 @@ class ChangeStateConversacion extends Conversation
             ', Estado llegada: ' . $sending->estadollegada .
             ', Dirección llegada: ' . $sending->direccionllegada
         );
+
+        $this->bot->startConversation(new \App\Http\Conversations\OptionsConversacion);
     }
 
     public function errorShowAllStates()
@@ -152,6 +158,8 @@ class ChangeStateConversacion extends Conversation
             if ($answer->isInteractiveMessageReply()) {
                 if ($answer->getValue() == Constant::OK) {
                     $this->showAllStates();
+                } else {
+                    $this->bot->startConversation(new \App\Http\Conversations\OptionsConversacion);
                 }
             } else {
                 $this->say('Por favor elige una opción de la lista.');

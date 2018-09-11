@@ -2,8 +2,10 @@
 
 namespace App\Http\Conversations;
 
+use App\Http\Helper\Helper;
 use BotMan\BotMan\Messages\Conversations\Conversation;
 use BotMan\BotMan\Messages\Incoming\Answer;
+use BotMan\BotMan\Messages\Incoming\IncomingMessage;
 
 class LoginConversacion extends Conversation
 {
@@ -15,6 +17,11 @@ class LoginConversacion extends Conversation
     public function run()
     {
         $this->askUsername();
+    }
+
+    public function stopsConversation(IncomingMessage $message)
+    {
+        return Helper::stopConversation($message->getText());
     }
 
     public function askUsername()
@@ -33,10 +40,10 @@ class LoginConversacion extends Conversation
 
             if ($logged) {
                 $this->say('Ha iniciado sesión correctamente');
-                $this->bot->startConversation(new \App\Http\Conversations\OptionsConversacion);
             } else {
                 $this->say('Credenciales inválidas.');
             }
+            $this->bot->startConversation(new \App\Http\Conversations\OptionsConversacion);
         });
     }
 
