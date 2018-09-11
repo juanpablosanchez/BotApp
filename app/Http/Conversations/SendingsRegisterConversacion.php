@@ -409,7 +409,7 @@ class SendingsRegisterConversacion extends Conversation
         }
         $this->sendMessageToAdmin();
 
-        $this->say('El envío ha sido registrado');
+        $this->say('El envío ha sido registrado. El código del envío es ' . $this->sendingInfo->codigo);
         $this->bot->startConversation(new \App\Http\Conversations\OptionsConversacion);
     }
 

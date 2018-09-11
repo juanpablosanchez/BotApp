@@ -27,6 +27,8 @@ class WelcomeConversacion extends Conversation
             $this->askName();
         } else {
             $this->say("Hola $firstname, bienvenid@ a nuestra empresa de mensajería.");
+            $this->saveUser();
+            $this->bot->startConversation(new \App\Http\Conversations\OptionsConversacion);
         }
 
     }
@@ -39,6 +41,7 @@ class WelcomeConversacion extends Conversation
             $this->saveUser();
 
             $this->say("Hola $name.");
+            $this->bot->startConversation(new \App\Http\Conversations\OptionsConversacion);
         });
     }
 
