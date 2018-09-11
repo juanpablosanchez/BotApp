@@ -129,8 +129,8 @@ class SendingsRegisterConversacion extends Conversation
     public function askWeight()
     {
         $this->ask("Ingrese el peso del paquete", function (Answer $answer) {
-            $this->newWeight = intval(trim($answer->getText()));
-            if ($this->newWeight > 0) {
+            $this->newWeight = trim($answer->getText());
+            if (intval($this->newWeight) > 0) {
                 $this->questionForAddNewPackage();
             } else {
                 $this->say('Peso no válido');
@@ -157,13 +157,70 @@ class SendingsRegisterConversacion extends Conversation
                 if ($answer->getValue() == Constant::OK) {
                     $this->requestPackageInfo();
                 } else {
-                    $this->requestSendingInfo();
+                    $this->confirmPackageList(0);
                 }
             } else {
                 $this->say('Por favor elige una opción de la lista.');
                 $this->requestPackTypeToDelete();
             }
         });
+    }
+
+    public function confirmPackageList($index)
+    {
+        if ($index >= count($this->packages)) {
+            $this->requestSendingInfo();
+        } else {
+            $this->packageIndex = $index;
+            $package = (object) $this->packages[$index];
+            $packTypeSelected = $this->packsTypeList->where('id', $package->tipopaquete_id)->first();
+            $message = Question::create('¿Desea confirmar este paquete?. Tipo paquete: ' . $packTypeSelected->nombre . ', Peso: ' . $package->peso)
+                ->addButtons([
+                    Button::create('Si')->value(Constant::OK),
+                    Button::create('No')->value(Constant::KO),
+                ]);
+
+            $this->ask($message, function (Answer $answer) {
+                if ($answer->isInteractiveMessageReply()) {
+                    if ($answer->getValue() == Constant::OK) {
+                        $this->confirmPackageList($this->packageIndex + 1);
+                    } else {
+                        $this->confirmRemovePackageFromList();
+                    }
+                } else {
+                    $this->say('Por favor elige una opción de la lista.');
+                    $this->confirmPackageList($this->packageIndex);
+                }
+            });
+        }
+    }
+
+    public function confirmRemovePackageFromList()
+    {
+        $message = Question::create('Esta seguro que desea eliminarlo de la lista?')
+            ->addButtons([
+                Button::create('Si')->value(Constant::OK),
+                Button::create('No')->value(Constant::KO),
+            ]);
+
+        $this->ask($message, function (Answer $answer) {
+            if ($answer->isInteractiveMessageReply()) {
+                if ($answer->getValue() == Constant::OK) {
+                    $this->removePackageFromList($this->packageIndex);
+                } else {
+                    $this->confirmPackageList($this->packageIndex + 1);
+                }
+            } else {
+                $this->say('Por favor elige una opción de la lista.');
+                $this->repeat();
+            }
+        });
+    }
+
+    public function removePackageFromList($index)
+    {
+        array_splice($this->packages, $index, 1);
+        $this->confirmPackageList($this->packageIndex);
     }
 
     public function requestSendingInfo()
