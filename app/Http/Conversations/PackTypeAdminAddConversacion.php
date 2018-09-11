@@ -67,6 +67,8 @@ class PackTypeAdminAddConversacion extends Conversation
             if ($answer->isInteractiveMessageReply()) {
                 if ($answer->getValue() == Constant::OK) {
                     $this->showCurrentPacksType();
+                } else {
+                    $this->bot->startConversation(new \App\Http\Conversations\OptionsConversacion);
                 }
             } else {
                 $this->say('Por favor elige una opción de la lista.');
