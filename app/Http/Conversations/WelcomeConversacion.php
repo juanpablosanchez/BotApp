@@ -4,6 +4,7 @@ namespace App\Http\Conversations;
 
 use BotMan\BotMan\Messages\Conversations\Conversation;
 use BotMan\BotMan\Messages\Incoming\Answer;
+use Exception;
 
 class WelcomeConversacion extends Conversation
 {
@@ -21,6 +22,8 @@ class WelcomeConversacion extends Conversation
     {
         $this->user = $this->getUser();
         $firstname = $this->user->nombre;
+
+        $this->resetSession($this->user->id);
 
         if ($firstname == '') {
             $this->say('Bienvenid@ a nuestro sistema de mensajería.');
@@ -59,6 +62,7 @@ class WelcomeConversacion extends Conversation
             $lastname = $channel->getLastName() ?: '';
 
             $user = (object) array(
+                'id' => '',
                 'codigo' => $id,
                 'nombre' => $firstname,
                 'apellido' => $lastname,
@@ -67,6 +71,7 @@ class WelcomeConversacion extends Conversation
             $currentUser = $userSaved->first();
 
             $user = (object) array(
+                'id' => $currentUser->id,
                 'codigo' => $currentUser->codigo,
                 'nombre' => $currentUser->nombre,
                 'apellido' => $currentUser->apellido,
@@ -84,6 +89,20 @@ class WelcomeConversacion extends Conversation
             'nombre' => $this->user->nombre,
             'apellido' => $this->user->apellido,
         ));
+
         $cliente->save();
+    }
+
+    public function resetSession($userId)
+    {
+        if (empty($userId)) {
+            return;
+        }
+
+        try {
+            \App\Administrador::where('cliente_id', $userId)->delete();
+        } catch (Exception $e) {}
+
+        return;
     }
 }
