@@ -143,6 +143,11 @@ class ChangeStateConversacion extends Conversation
             ', Dirección llegada: ' . $sending->direccionllegada
         );
 
+        $this->bot->say(
+            'El paquete ' . $sending->codigo . ' ha sido modificado al estado ' . $sendingState->nombre,
+            $user->code
+        );
+
         $this->bot->startConversation(new \App\Http\Conversations\OptionsConversacion);
     }
 

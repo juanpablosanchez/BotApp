@@ -420,21 +420,18 @@ class SendingsRegisterConversacion extends Conversation
         foreach ($admins as $admin) {
             $this->bot->say(
                 'Se ha registrado un envío desde su empresa de mensajería. Código de envío: ' . $this->sendingInfo->codigo,
-                $admin,
-                TelegramDriver::class
+                $admin
             );
             foreach ($this->packages as $package) {
                 $packType = $this->packsTypeList->where('id', $package['tipopaquete_id'])->first();
                 $this->bot->say(
                     'Paquete: Tipo de paquete ' . $packType->nombre . ', peso: ' . $package['peso'],
-                    $admin,
-                    TelegramDriver::class
+                    $admin
                 );
             }
             $this->bot->say(
                 'Información del cliente: Nombre: ' . $this->user->nombre . ', apellido: ' . $this->user->apellido . ', teléfono; ' . $this->user->telefono,
-                $admin,
-                TelegramDriver::class
+                $admin
             );
         }
     }
