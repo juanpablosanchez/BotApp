@@ -6,6 +6,6 @@ class Helper
 {
     public static function stopConversation($message)
     {
-        return $message == 'cancelar' || $message == 'stop';
+        return $message == 'cancelar' || $message == 'stop' || $message == '/start';
     }
 }

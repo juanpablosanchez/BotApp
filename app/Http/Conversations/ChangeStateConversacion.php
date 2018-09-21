@@ -77,7 +77,7 @@ class ChangeStateConversacion extends Conversation
         $message = Question::create('¿Qué desea hacer?')
             ->addButtons([
                 Button::create('Modificar estado')->value(Constant::EDIT),
-                Button::create('Mostrar listado')->value(Constant::list),
+                Button::create('Mostrar listado')->value(Constant::LIST),
                 Button::create('Cancelar')->value(Constant::CANCEL),
             ]);
 
@@ -87,7 +87,7 @@ class ChangeStateConversacion extends Conversation
                     case Constant::EDIT:
                         $this->showAllStates();
                         break;
-                    case Constant::list:
+                    case Constant::LIST:
                         $this->showAllSendings();
                         break;
                     default:
