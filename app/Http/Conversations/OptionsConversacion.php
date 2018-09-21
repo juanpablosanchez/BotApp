@@ -3,8 +3,10 @@
 namespace App\Http\Conversations;
 
 use App\Http\Helper\Constant;
+use App\Http\Helper\Helper;
 use BotMan\BotMan\Messages\Conversations\Conversation;
 use BotMan\BotMan\Messages\Incoming\Answer;
+use BotMan\BotMan\Messages\Incoming\IncomingMessage;
 use BotMan\BotMan\Messages\Outgoing\Actions\Button;
 use BotMan\BotMan\Messages\Outgoing\Question;
 
@@ -18,6 +20,11 @@ class OptionsConversacion extends Conversation
     public function run()
     {
         $this->showOptions();
+    }
+
+    public function stopsConversation(IncomingMessage $message)
+    {
+        return Helper::stopConversation($message->getText());
     }
 
     public function showOptions()
